@@ -21,7 +21,6 @@ public class DataStore {
 
     private static ArrayList<Plot> PLOTS = new ArrayList<Plot>();
     private static ArrayList<PlayerData> PLAYER_DATA = new ArrayList<PlayerData>();
-    private static ArrayList<Group> GROUPS = new ArrayList<Group>();
 
     private static boolean safeToSave = false;
 
@@ -90,19 +89,6 @@ public class DataStore {
         return plots;
     }
 
-    public static ArrayList<Group> getGroups() { return GROUPS; }
-    public static Group createGroup(UUID memberID) {
-        if (getGroup(memberID) != null) return null;
-        Group new_ = new Group(memberID);
-        GROUPS.add(new_);
-        return new_;
-    }
-    public static Group getGroup(UUID memberID) {
-        for (Group g: GROUPS)
-            if (g.hasPlayer(memberID)) return g;
-        return null;
-    }
-
     public static boolean save() {
         if (!safeToSave) return false;
         try {
@@ -115,8 +101,6 @@ public class DataStore {
                 plot.save(writer);
             for (PlayerData pd : DataStore.getPlayerData())
                 pd.save(writer);
-            for (Group g: GROUPS)
-                g.save(writer);
             writer.close();
             System.out.println("Successfully wrote to " + f.getAbsolutePath() + "!");
             return true;
@@ -144,9 +128,6 @@ public class DataStore {
                                 Integer.parseInt(line.get("z"))));
             } else if (type.equals("player")) {
                 PlayerData loaded = DataStore.registerPlayer(UUID.fromString(line.get("uuid")));
-                loaded.load(line);
-            } else if (type.equals("group")) {
-                Group loaded = new Group(UUID.fromString(line.get("uuid")));
                 loaded.load(line);
             }
         }

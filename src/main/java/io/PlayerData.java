@@ -1,8 +1,6 @@
 package io;
 
-import controllers.WebsocketController;
 import main.OpenMC;
-import misc.MiscCommands;
 import misc.MiscMath;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,7 +9,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -23,7 +20,7 @@ public class PlayerData {
     private int reputation, banCount, maxPlots;
     private long lastWarning, lastActivity, lastTeleport, lastJoin, timeRemaining;
 
-    private ArrayList<UUID> invitations;
+    private ArrayList<UUID> friends;
 
     public PlayerData(UUID playerID) {
         this.playerID = playerID;
@@ -33,7 +30,7 @@ public class PlayerData {
         this.lastActivity = System.currentTimeMillis();
         this.lastJoin = System.currentTimeMillis();
         this.addTime(60*10);
-        this.invitations = new ArrayList<UUID>();
+        this.friends = new ArrayList<UUID>();
     }
 
     public OfflinePlayer getOfflinePlayer() {
@@ -46,7 +43,7 @@ public class PlayerData {
         //first bed then spawn then capital
         if (getOfflinePlayer().getBedSpawnLocation() != null) return getOfflinePlayer().getBedSpawnLocation();
         if (getSpawn() != null) return getSpawn();
-        return OpenMC.SPAWN_VILLAGE;
+        return OpenMC.CAPITAL;
     }
     public Location getSpawn() { return spawn; }
     public void setSpawn(Location loc) { spawn = loc; }
@@ -54,6 +51,16 @@ public class PlayerData {
     public boolean canClaimLand() {
         int owned = DataStore.getPlots(playerID).size();
         return owned < maxPlots;
+    }
+
+    public boolean isFriendsWith(UUID id) { return friends.contains(id); }
+    public boolean addFriend(UUID id) { if (friends.contains(id)) return false; else { friends.add(id); return true; } }
+    public boolean removeFriend(UUID id) {
+        if (friends.contains(id)) {
+            friends.remove(id);
+            return true;
+        }
+        return false;
     }
 
     public int getReputation() {
@@ -76,7 +83,6 @@ public class PlayerData {
         reputation = (int) MiscMath.clamp(amount, -100, 100);
         if (showReputation) sendTitle("", ChatColor.RED + "Reputation: " + reputation, 3);
         if (amount < 0) setWarned(); //if the rep is going down, you were probably warned
-        WebsocketController.sendPlayerData();
     }
 
     public void sendMessage(String message) {
@@ -121,27 +127,12 @@ public class PlayerData {
         return (int) ((System.currentTimeMillis() - lastActivity) / 1000 / 60);
     }
 
-    public Group getGroup() { return DataStore.getGroup(playerID); }
-    public boolean inGroupWith(UUID playerID) {
-        if (DataStore.getGroup(this.playerID) == null) return false;
-        return DataStore.getGroup(this.playerID).equals(DataStore.getGroup(playerID));
-    }
-
-    public boolean inviteToGroup(UUID groupOwner) { return invitations.add(groupOwner); }
-    public boolean isOwnerOfGroup() {
-        Group g = DataStore.getGroup(playerID);
-        if (g == null) return false;
-        return g.isOwnedBy(playerID);
-    }
-    public boolean acceptInvitation(UUID groupOwner) {
-        return DataStore.getGroup(groupOwner).addMember(playerID) && invitations.remove(groupOwner);
-    }
-
     public boolean isOnline() { return getPlayer() != null ? getPlayer().isOnline() : false; }
     public void updateLastLogin() { lastJoin = System.currentTimeMillis(); }
 
     public void adjustTimeRemaining() { timeRemaining -= System.currentTimeMillis() - lastJoin; }
     public void addTime(int minutes) { timeRemaining += minutes*60*1000; }
+    public void setTime(int minutes) { timeRemaining = minutes*60*1000; }
     public long getTimeRemaining() { return (long)MiscMath.clamp(timeRemaining, 0, Long.MAX_VALUE); }
     public int getMinutesRemaining() { return (int)Math.ceil(timeRemaining / 60 / 1000); }
     public int getHoursRemaining() { return getMinutesRemaining() / 60; }
@@ -158,9 +149,9 @@ public class PlayerData {
         reputation = Integer.parseInt(data.getOrDefault("rep", "0"));
         banCount = Integer.parseInt(data.getOrDefault("bans", "0"));
         spawn = new Location(OpenMC.OVERWORLD,
-                        Integer.parseInt(data.getOrDefault("spawn_x", OpenMC.SPAWN_VILLAGE.getBlockX()+"")),
-                        Integer.parseInt(data.getOrDefault("spawn_y", OpenMC.SPAWN_VILLAGE.getBlockY()+"")),
-                        Integer.parseInt(data.getOrDefault("spawn_z", OpenMC.SPAWN_VILLAGE.getBlockZ()+"")));
+                        Integer.parseInt(data.getOrDefault("spawn_x", OpenMC.CAPITAL.getBlockX()+"")),
+                        Integer.parseInt(data.getOrDefault("spawn_y", OpenMC.CAPITAL.getBlockY()+"")),
+                        Integer.parseInt(data.getOrDefault("spawn_z", OpenMC.CAPITAL.getBlockZ()+"")));
         return true;
     }
 
@@ -171,11 +162,6 @@ public class PlayerData {
                 +", spawn_y = "+getSpawn().getBlockY()
                 +", spawn_z = "+getSpawn().getBlockZ();
         return saveString;
-    }
-
-    public String asPacket() {
-        //change first element to player name, then add online status to end
-        return getOfflinePlayer().getName() + " " + playerID + " " + reputation + " " + isOnline();
     }
 
 }

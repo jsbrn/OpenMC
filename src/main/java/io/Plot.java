@@ -44,7 +44,7 @@ public class Plot {
 
     public int distanceTo(Location loc) { return (int)loc.distance(center); }
     public boolean isTooClose(Location loc) { return distanceTo(loc) <= radius * 2; }
-    public boolean isForeignTo(UUID playerID) { return !ownedBy(playerID) && !DataStore.getPlayerData(owner).inGroupWith(playerID); }
+    public boolean isForeignTo(UUID playerID) { return !ownedBy(playerID) && !DataStore.getPlayerData(owner).isFriendsWith(playerID); }
 
     public boolean isBannerBroken() {
         return !center().getBlock().getBlockData().getAsString().contains("banner");

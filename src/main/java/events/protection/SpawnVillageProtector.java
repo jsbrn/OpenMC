@@ -16,7 +16,7 @@ public class SpawnVillageProtector implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (event.getBlock().getLocation()
-                .distance(OpenMC.SPAWN_VILLAGE) < 64
+                .distance(OpenMC.CAPITAL) < 64
                 && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
         }
@@ -26,7 +26,7 @@ public class SpawnVillageProtector implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         if (event.getBlock().getLocation()
-                .distance(OpenMC.SPAWN_VILLAGE) < 64
+                .distance(OpenMC.CAPITAL) < 64
                 && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
             event.setCancelled(true);
         }

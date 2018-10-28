@@ -1,23 +1,18 @@
 package events;
 
-import commands.ServerGuideCommand;
-import controllers.WebsocketController;
 import io.DataStore;
 import io.PlayerData;
 import main.OpenMC;
 import misc.MiscCommands;
 import misc.MiscMath;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;
 
@@ -29,6 +24,7 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "buycraft forcecheck");
         Player p = event.getPlayer();
         PlayerData pd = DataStore.getPlayerData(p.getUniqueId());
         if (pd.getMinutesRemaining() < 1) {
@@ -48,19 +44,17 @@ public class PlayerJoinListener implements Listener {
 
         if (!p.hasPlayedBefore()) {
             MiscCommands.giveSpawnItems(p);
-            pd.setSpawn(MiscCommands.randomSpawn(512, 2048));
+            pd.setSpawn(MiscCommands.randomSpawn(200, 3000));
             p.teleport(pd.getSpawn());
             p.sendTitle("Welcome to OpenMC!", "Please read the server guide.",
                     MiscMath.secondsToTicks(2), MiscMath.secondsToTicks(5), MiscMath.secondsToTicks(2));
         }
 
-        WebsocketController.sendPlayerData();
         DataStore.save();
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-        WebsocketController.sendPlayerData();
         DataStore.getPlayerData(event.getPlayer().getUniqueId()).adjustTimeRemaining();
         DataStore.save();
     }
@@ -68,7 +62,6 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerKick(PlayerKickEvent event) {
         event.setLeaveMessage("");
-        WebsocketController.sendPlayerData();
     }
 
 }

@@ -7,12 +7,6 @@ commands:
   guide:
     description: Lost the guide? Get a new one!
     usage: /guide
-  plot:
-    description: Admin command. Remove (or change ownership of) plots.
-    usage: /plot (delete|setOwner) [ownerUUID]
-  set:
-    description: Admin command. Sets a value for the specified player.
-    usage: /set (time|rep) <player> <amount>
   invite:
     description: Invite a friend to join your group.
     usage: /invite <player>
@@ -22,3 +16,13 @@ commands:
   leave:
     description: Leave your current group.
     usage: /leave
+
+  set:
+    description: Admin command. Sets a value for the specified player.
+    usage: /set (time|rep) <player> <amount>
+  add:
+    description: Admin command. Adds a value to the specified player.
+    usage: /add time <player> <amount>
+  plot:
+    description: Admin command. Remove (or change ownership of) plots.
+    usage: /plot (delete|setOwner) [ownerUUID]

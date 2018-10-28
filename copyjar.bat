@@ -1,6 +1,6 @@
 echo off
-set source="C:\Users\Main\Documents\OpenMC\target"
-set target="C:\Users\Main\Desktop\OpenMC_Server\plugins"
+set source="C:\Users\Main\Documents\GitHub\OpenMC\target"
+set target="C:\Users\Main\Documents\OpenMCTestServer\plugins"
 echo Deleting OpenMC.jar
 del %source%\OpenMC.jar
 echo Renaming shaded jar

@@ -43,7 +43,7 @@ public class MiscCommands {
 
                 ChatColor.BOLD+"Quick Start\n\n"+ChatColor.RESET+
                         "1. Place a banner to claim and protect your land\n\n" +
-                        "2. Use /invite to play with friends\n\n" +
+                        "2. Befriend people\n\n" +
                         "3. Sell goods and buy more land at the Capital (just follow the compass)\n\n",
 
                 ChatColor.BOLD+"Features\n\n" + ChatColor.RESET +
@@ -52,14 +52,14 @@ public class MiscCommands {
                         "- invite friends to your plots\n" +
                         "- local/group chat\n" +
                         "- player reputation\n"+
-                        "- use emeralds in the Capital city\n",
+                        "- buy land in the Capital city\n",
 
                 ChatColor.BOLD+"Commands\n\n" + ChatColor.RESET +
                         "/guide (read the Guide again)\n"+
                         "/plots (show your plots)\n"+
-                        "/invite <player> (invite someone to your group)\n"+
+                        "/invite (invite someone to your group)\n"+
                         "/leave (leave your group)\n"+
-                        "/global <on | off> (toggle global chat)",
+                        "/global (toggle global chat)",
 
                 ChatColor.ITALIC+"(continued)\n\n" + ChatColor.RESET +
                         "/stuck (if you can't get out of a hole)\n"+
@@ -67,14 +67,14 @@ public class MiscCommands {
 
                 ChatColor.BOLD+"More Info\n\n"+ChatColor.RESET+
                         ChatColor.ITALIC+"Donations\n\n"+ChatColor.RESET+
-                        "There are no micro-transactions in OpenMC. Instead, the server is pay-as-you-go. \n\n"+
+                        "There are no micro-transactions in OpenMC. Instead, the server is pay-as-you-play. \n\n"+
                         "This solves two problems:",
 
                 "First, players will be far less likely to cause trouble.\n\nSecond, " +
                         "if someone doesn't play for a long time, it does not cost them anything.",
 
                 "You can donate at "+ChatColor.DARK_AQUA+OpenMC.WEBSITE_URL+ChatColor.BLACK+". " +
-                        "For every dollar you contribute, you get 25 hours of play time.\n\nNew players start with 10.",
+                        "For every dollar you contribute, you get 24 hours of play time.\n\nNew players start with 24.",
 
                 ChatColor.ITALIC+"Reputation\n\n"+ChatColor.RESET+
                         "Griefing, killing or stealing from other players will give you a bad reputation. " +

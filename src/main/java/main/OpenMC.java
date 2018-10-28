@@ -1,7 +1,7 @@
 package main;
 
 import commands.*;
-import controllers.WebsocketController;
+import controllers.HTTPController;
 import events.*;
 import events.admin.MagicWandListener;
 import events.protection.ReputationListener;
@@ -25,9 +25,9 @@ public class OpenMC extends JavaPlugin {
     private PluginManager pluginManager = getServer().getPluginManager();
     public static World OVERWORLD, NETHER, THE_END;
     public static Server SERVER;
-    public static Location SPAWN_VILLAGE;
+    public static Location CAPITAL;
     public static int SPAWN_VILLAGE_RADIUS = 64;
-    public static String WEBSITE_URL = "192.168.0.199";
+    public static String WEBSITE_URL = "https://openmc.net";
 
     @Override
     public void onEnable() {
@@ -35,9 +35,9 @@ public class OpenMC extends JavaPlugin {
         OVERWORLD = getServer().getWorld("world");
         NETHER = getServer().getWorld("world_nether");
         THE_END = getServer().getWorld("world_the_end");
-        SPAWN_VILLAGE = new Location(OVERWORLD, -40, 70, -4);
+        CAPITAL = new Location(OVERWORLD, -629, 64, 288);
         SERVER = getServer();
-        OVERWORLD.setSpawnLocation(SPAWN_VILLAGE);
+        OVERWORLD.setSpawnLocation(CAPITAL);
 
         pluginManager.registerEvents(new SpawnVillageProtector(), this);
         pluginManager.registerEvents(new PlotProtector(), this);
@@ -48,27 +48,32 @@ public class OpenMC extends JavaPlugin {
         pluginManager.registerEvents(new SignInteractListener(), this);
         pluginManager.registerEvents(new ChatListener(), this);
         pluginManager.registerEvents(new PlayerSleepListener(), this);
-        this.getCommand("guide").setExecutor(new ServerGuideCommand());
+        this.getCommand("guide").setExecutor(new GuideCommand());
         this.getCommand("set").setExecutor(new SetCommand());
-        this.getCommand("invite").setExecutor(new InviteCommand());
-        this.getCommand("accept").setExecutor(new AcceptCommand());
-        this.getCommand("leave").setExecutor(new LeaveCommand());
+        this.getCommand("add").setExecutor(new AddCommand());
 
         DataConverter.register();
         DataStore.backup();
         DataStore.load();
         DataStore.save();
         startRecurringEvents();
-        WebsocketController.connect("localhost");
+        HTTPController.keepAlive();
     }
 
     @Override
     public void onDisable() {
-        WebsocketController.disconnect();
         DataStore.save();
     }
 
     private void startRecurringEvents() {
+
+        TimerTask keepWebServerAlive = new TimerTask() {
+            @Override
+            public void run() {
+                HTTPController.keepAlive();
+            }
+        };
+
         TimerTask reputationFromPlaying = new TimerTask() {
             @Override
             public void run() {
@@ -79,6 +84,7 @@ public class OpenMC extends JavaPlugin {
             }
         };
         SERVER.getScheduler().runTaskTimer(this, reputationFromPlaying, 0, MiscMath.secondsToTicks(60*20)); //20 minutes
+        //SERVER.getScheduler().runTaskTimer(this, keepWebServerAlive, 0, MiscMath.secondsToTicks(60*5)); //5 minutes
     }
 
 }

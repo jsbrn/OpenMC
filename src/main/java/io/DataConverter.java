@@ -38,7 +38,7 @@ public abstract class DataConverter {
                 for (String param: params)
                     valueMap.put(param.trim().replaceAll("\\s*=.*", ""), param.trim().replaceAll(".*=\\s*", ""));
                 data.add(valueMap);
-                MiscCommands.printMap(valueMap);
+                //MiscCommands.printMap(valueMap);
                 if (valueMap.get("type").equals("meta"))
                     fileVersion = Integer.parseInt(valueMap.get("version"));
             }

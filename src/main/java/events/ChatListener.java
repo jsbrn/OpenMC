@@ -22,16 +22,16 @@ public class ChatListener implements Listener {
         for (Player recipient : recipients) {
             //can only hear message if player is close enough, speaking globally, or a friend of the speaker
             boolean isSender = p.getUniqueId().compareTo(recipient.getUniqueId()) == 0;
-            boolean isGroupMember = DataStore.getPlayerData(recipient.getUniqueId()).inGroupWith(p.getUniqueId());
+            boolean isFriend = DataStore.getPlayerData(recipient.getUniqueId()).isFriendsWith(p.getUniqueId());
             boolean isNear = recipient.getNearbyEntities(CHAT_RADIUS, CHAT_RADIUS, CHAT_RADIUS).contains(p) || isSender;
             boolean inGlobalChat = true; //@TODO set a flag in PlayerData
 
-            if (!(globalMessage && inGlobalChat) && !isGroupMember && !isNear && !isSender) continue;
+            if (!(globalMessage && inGlobalChat) && !isFriend && !isNear && !isSender) continue;
             if (globalMessage) {
                 if (inGlobalChat) recipient.sendMessage("<"+ChatColor.BOLD+p.getName()+ChatColor.RESET+"> "
                         +event.getMessage().replaceFirst("!", ""));
             } else {
-                if (isGroupMember) {
+                if (isFriend) {
                     recipient.sendMessage("<"+ChatColor.GREEN+p.getName()+ChatColor.WHITE+"> "+event.getMessage());
                 } else if (isNear) {
                     recipient.sendMessage(ChatColor.GRAY+"<"+p.getName()+"> "+event.getMessage());
