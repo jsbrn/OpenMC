@@ -29,7 +29,7 @@ public class PlayerData {
         this.maxPlots = 1;
         this.lastActivity = System.currentTimeMillis();
         this.lastJoin = System.currentTimeMillis();
-        this.addTime(60*10);
+        this.addTime(60*24); //24 hours
         this.friends = new ArrayList<UUID>();
     }
 

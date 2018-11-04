@@ -16,6 +16,9 @@ commands:
   leave:
     description: Leave your current group.
     usage: /leave
+  plots:
+    description: List all your plots.
+    usage: /plots
 
   set:
     description: Admin command. Sets a value for the specified player.

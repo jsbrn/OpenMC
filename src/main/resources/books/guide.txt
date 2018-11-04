@@ -1,0 +1,110 @@
+§2§lWelcome to OpenMC!§0
+§3(No world resets!)§0
+
+§9§nhttps://openmc.net§0
+
+§0You have spawned by yourself in a random area. You are free to start playing, but you'll want to read this book first, so you know how it works.§0
+
+==========================
+
+§lClaiming Land§r
+
+Place a banner down to claim (§2and protect§0) a 50x50x50 plot of land.
+
+You can buy more plots with Emeralds in the Capital City.
+
+Use §6/plots§0 to list your plots.§0
+
+==========================
+
+§lFriends§r
+
+To add a trusted player as a friend, use §6/friend §6§ousername§0.
+
+They will be able to build on your plots, and you will see them in chat wherever they are.§0
+
+==========================
+
+§lChat§r
+
+By default, you can only see chat messages from nearby players and friends.
+
+Use §6/global §6§oon/off§0 to toggle public chat. To send a public message, use §6/g §6§omessage§0.
+ §0
+
+==========================
+
+§lPlayer Reputation§r
+
+If you attack another player or steal/damage their property, you will lose reputation. If your reputation drops below §4-100§0, you will be temporarily banned.
+
+Reputation increases over time.§0
+
+==========================
+
+§lThe Capital§r
+
+The Capital City is located at the center of the world.
+
+You can buy and sell goods at the §lmarket§r, buy more land plots at the §lcourthouse§r, bet on fights in the §larena§r, and more.§0
+
+==========================
+
+All players spawn within 3000 blocks of it, and the compass will always point to it.§0
+
+==========================
+
+§lServer Funding§r
+
+OpenMC is pay-as-you-play. Players can purchase more server time on the §9§nwebsite§0.
+
+The goal is to increase the quality and dedication of the community (and keep the server alive).
+
+ §0
+
+==========================
+
+I recognize that this might alienate some players, but I think it's an essential step in ensuring the quality of the server, by challenging players to put their money where their mouse is, so to speak.
+ §0
+
+==========================
+
+Check out the §9§nwebsite§0 to learn more about it, and if you have any questions or feedback you can message me (Computerology) there as well.§0
+
+==========================
+
+§lPermits§r
+
+You will need a permit from the Capital to use TNT, elytras and redstone. This is to keep the lag down to a minimum.
+
+You can buy these at the Capital for Emeralds.
+ §0
+
+==========================
+
+§lMiscellaneous§r
+
+- get more server time by having the highest reputation or recruiting new players
+- sleep in a bed at night to add 1 hour to the world time
+- the §9§nwebsite§0 has player stats, information and even a live map!
+ §0
+
+==========================
+
+§lList of Commands§r
+
+§6/guide §0(read the guide)
+§6/plots §0(view plots)
+§6/rep §0(view reputation)
+§6/friend
+/unfriend
+/global§0 and§6 /g
+/website
+/discord
+/reset§0 (§la fresh start!§r)§0
+
+==========================
+
+(Thanks for actually reading this)
+
+:)§0

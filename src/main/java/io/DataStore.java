@@ -155,4 +155,8 @@ public class DataStore {
         }
     }
 
+    public static void getContents(File file) {
+
+    }
+
 }

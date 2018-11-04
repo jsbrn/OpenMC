@@ -25,7 +25,9 @@ public class GuideCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (commandSender instanceof Player) {
             Player p = (Player)commandSender;
+
             MiscCommands.giveServerGuide(p);
+            p.sendMessage(ChatColor.YELLOW+"You have been given a helpful book.");
             return true;
         }
         return false;

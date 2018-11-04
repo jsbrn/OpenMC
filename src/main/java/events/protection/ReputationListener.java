@@ -28,6 +28,7 @@ public class ReputationListener implements Listener {
         Block block = event.getClickedBlock();
         if (block == null) return;
         if (event.getAction() != Action.PHYSICAL || block.getType() != Material.FARMLAND) return;
+        if (event.getClickedBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         Plot here = DataStore.getPlot(block.getLocation());
         if (here == null) return;
         if (here.isForeignTo(event.getPlayer().getUniqueId())) {

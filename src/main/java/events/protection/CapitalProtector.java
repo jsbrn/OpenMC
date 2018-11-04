@@ -10,11 +10,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class SpawnVillageProtector implements Listener {
+public class CapitalProtector implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
+        if (event.getBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         if (event.getBlock().getLocation()
                 .distance(OpenMC.CAPITAL) < 64
                 && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -25,6 +26,7 @@ public class SpawnVillageProtector implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
+        if (event.getBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         if (event.getBlock().getLocation()
                 .distance(OpenMC.CAPITAL) < 64
                 && event.getPlayer().getGameMode() != GameMode.CREATIVE) {
@@ -35,6 +37,7 @@ public class SpawnVillageProtector implements Listener {
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.isCancelled()) return;
+        if (event.getEntity().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         if (event.getEntity().getLocation()
                 .distance(new Location(OpenMC.OVERWORLD, 0, 64, 0)) < 64) {
             if (event.getDamager() instanceof Player) {

@@ -3,9 +3,8 @@ package main;
 import commands.*;
 import controllers.HTTPController;
 import events.*;
-import events.admin.MagicWandListener;
 import events.protection.ReputationListener;
-import events.protection.SpawnVillageProtector;
+import events.protection.CapitalProtector;
 import events.protection.PlotProtector;
 import io.DataConverter;
 import io.DataStore;
@@ -39,18 +38,19 @@ public class OpenMC extends JavaPlugin {
         SERVER = getServer();
         OVERWORLD.setSpawnLocation(CAPITAL);
 
-        pluginManager.registerEvents(new SpawnVillageProtector(), this);
+        pluginManager.registerEvents(new CapitalProtector(), this);
         pluginManager.registerEvents(new PlotProtector(), this);
         pluginManager.registerEvents(new ReputationListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerRespawnListener(), this);
-        pluginManager.registerEvents(new MagicWandListener(), this);
         pluginManager.registerEvents(new SignInteractListener(), this);
         pluginManager.registerEvents(new ChatListener(), this);
         pluginManager.registerEvents(new PlayerSleepListener(), this);
+        pluginManager.registerEvents(new CommandOverrider(), this);
         this.getCommand("guide").setExecutor(new GuideCommand());
         this.getCommand("set").setExecutor(new SetCommand());
         this.getCommand("add").setExecutor(new AddCommand());
+        this.getCommand("plots").setExecutor(new PlotsCommand());
 
         DataConverter.register();
         DataStore.backup();

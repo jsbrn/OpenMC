@@ -3,6 +3,7 @@ package events.protection;
 import io.DataStore;
 import io.PlayerData;
 import io.Plot;
+import main.OpenMC;
 import misc.MiscMath;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -29,6 +30,8 @@ public class PlotProtector implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         if (event.getPlayer() == null) return;
+        if (event.getPlayer().isOp()) return;
+        if (event.getBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         PlayerData pd = DataStore.getPlayerData(event.getPlayer().getUniqueId());
         Plot here = DataStore.getPlot(event.getBlock().getLocation());
         if (event.getBlock().getBlockData().getAsString().contains("banner")) { claimPlot(event); return; }
@@ -52,6 +55,7 @@ public class PlotProtector implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (event.getPlayer() == null) return;
+        if (event.getBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         Plot here = DataStore.getPlot(event.getBlock().getLocation());
         boolean foreign = here == null ? false : here.isForeignTo(event.getPlayer().getUniqueId());
         boolean isBanner = event.getBlock().getBlockData().getAsString().contains("banner");
@@ -68,6 +72,7 @@ public class PlotProtector implements Listener {
         if (event.isCancelled()) return;
         Block clicked = event.getClickedBlock();
         if (clicked == null) return;
+        if (clicked.getLocation().getWorld() != OpenMC.OVERWORLD) return;
         Plot here = DataStore.getPlot(clicked.getLocation());
         if (here != null) {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -107,6 +112,7 @@ public class PlotProtector implements Listener {
     public void onPlayerRightClickArmorStand(PlayerInteractAtEntityEvent event) {
         if (event.isCancelled()) return;
         if (event.getRightClicked().getType() != EntityType.ARMOR_STAND) return;
+        if (event.getRightClicked().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         Plot here = DataStore.getPlot(event.getRightClicked().getLocation());
         if (here != null) {
             if (here.isForeignTo(event.getPlayer().getUniqueId())) {
@@ -118,6 +124,7 @@ public class PlotProtector implements Listener {
     @EventHandler
     public void onEntityDamageByPlayer(EntityDamageByEntityEvent e) {
         if (e.isCancelled()) return;
+        if (e.getEntity().getLocation().getWorld() != OpenMC.OVERWORLD) return;
         Plot here = DataStore.getPlot(e.getEntity().getLocation());
         Player attacker = null;
 
