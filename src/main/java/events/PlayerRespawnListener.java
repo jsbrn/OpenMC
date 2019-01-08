@@ -20,11 +20,6 @@ public class PlayerRespawnListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        DataStore.getPlayerData(event.getPlayer().getUniqueId()).adjustTimeRemaining();
-    }
-
-    @EventHandler
     public void onPlayerKick(PlayerKickEvent event) {
         event.setLeaveMessage("");
     }

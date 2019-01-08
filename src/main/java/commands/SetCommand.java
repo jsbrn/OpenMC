@@ -26,9 +26,8 @@ public class SetCommand implements CommandExecutor {
             commandSender.sendMessage(playerName+"'s reputation is now "+pd.getReputation()+".");
             System.out.println(playerName+"'s reputation is now "+pd.getReputation()+".");
             pd.sendMessage(ChatColor.YELLOW+"Your reputation has been set to "+pd.getReputation()+" by "+commandSender.getName()+".");
-        } else if (cmd.contains("time")) {
-            pd.setTime(amount);
-            commandSender.sendMessage(playerName+" now has "+pd.getMinutesRemaining()+" minutes of play time.");
+        } else if (cmd.contains("member")) {
+            pd.setMembership(amount > 0);
         }
         return true;
     }

@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class PlayerData {
 
     private UUID playerID;
     private Location spawn;
+    private boolean isMember;
     private int reputation, banCount, maxPlots;
-    private long lastWarning, lastActivity, lastTeleport, lastJoin, timeRemaining;
+    private long lastWarning, lastActivity, firstJoin, lastJoin;
 
     private ArrayList<UUID> friends;
 
@@ -26,10 +28,11 @@ public class PlayerData {
         this.playerID = playerID;
         this.reputation = 0;
         this.lastWarning = 0;
-        this.maxPlots = 1;
+        this.maxPlots = 2;
+        this.isMember = false;
+        this.firstJoin = System.currentTimeMillis();
         this.lastActivity = System.currentTimeMillis();
         this.lastJoin = System.currentTimeMillis();
-        this.addTime(60*24); //24 hours
         this.friends = new ArrayList<UUID>();
     }
 
@@ -51,6 +54,15 @@ public class PlayerData {
     public boolean canClaimLand() {
         int owned = DataStore.getPlots(playerID).size();
         return owned < maxPlots;
+    }
+    public void addMaxPlot(int amount) { maxPlots += amount; }
+    public int getMaxPlots() { return maxPlots; }
+
+    public void setMembership(boolean m) { isMember = m; }
+    public boolean isMember() { return isMember; }
+    public int trialDaysLeft() {
+        long daysSince = (System.currentTimeMillis() - firstJoin) / 1000 / 60 / 60 / 24;
+        return (int)Math.max(7 - daysSince, 0);
     }
 
     public boolean isFriendsWith(UUID id) { return friends.contains(id); }
@@ -118,8 +130,6 @@ public class PlayerData {
         lastWarning = System.currentTimeMillis();
     }
 
-    public void updateLastTeleport() { lastTeleport = System.currentTimeMillis(); }
-    public long timeSinceLastTeleport() { return System.currentTimeMillis() - lastTeleport; }
     public void updateLastActivity() {
         lastActivity = System.currentTimeMillis();
     }
@@ -130,13 +140,6 @@ public class PlayerData {
     public boolean isOnline() { return getPlayer() != null ? getPlayer().isOnline() : false; }
     public void updateLastLogin() { lastJoin = System.currentTimeMillis(); }
 
-    public void adjustTimeRemaining() { timeRemaining -= System.currentTimeMillis() - lastJoin; }
-    public void addTime(int minutes) { timeRemaining += minutes*60*1000; }
-    public void setTime(int minutes) { timeRemaining = minutes*60*1000; }
-    public long getTimeRemaining() { return (long)MiscMath.clamp(timeRemaining, 0, Long.MAX_VALUE); }
-    public int getMinutesRemaining() { return (int)Math.ceil(timeRemaining / 60 / 1000); }
-    public int getHoursRemaining() { return getMinutesRemaining() / 60; }
-
     public boolean save(PrintWriter pw) {
         pw.println(asString());
         return true;
@@ -144,8 +147,8 @@ public class PlayerData {
 
     public boolean load(HashMap<String, String> data) {
         if (data == null) return false;
+        firstJoin = Integer.parseInt(data.getOrDefault("first_join", System.currentTimeMillis()+""));
         lastJoin = Long.parseLong(data.getOrDefault("last_join", System.currentTimeMillis()+""));
-        timeRemaining = Long.parseLong(data.getOrDefault("play_time", timeRemaining+""));
         reputation = Integer.parseInt(data.getOrDefault("rep", "0"));
         banCount = Integer.parseInt(data.getOrDefault("bans", "0"));
         spawn = new Location(OpenMC.OVERWORLD,
@@ -154,10 +157,9 @@ public class PlayerData {
                         Integer.parseInt(data.getOrDefault("spawn_z", OpenMC.CAPITAL.getBlockZ()+"")));
         return true;
     }
-
     public String asString() {
         String saveString = "type = player, uuid = "+playerID+", rep = "+reputation+", bans = "+banCount
-                +", play_time = "+timeRemaining+", last_join = "+lastJoin;
+                +", last_join = "+lastJoin+", first_join = "+firstJoin;
         if (getSpawn() != null) saveString += ", spawn_x = "+getSpawn().getBlockX()
                 +", spawn_y = "+getSpawn().getBlockY()
                 +", spawn_z = "+getSpawn().getBlockZ();

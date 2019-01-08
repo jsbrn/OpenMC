@@ -20,16 +20,9 @@ public class AddCommand implements CommandExecutor {
         String playerName = strings[1], cmd = strings[0];
         PlayerData pd = DataStore.getPlayerData(playerName);
         if (pd == null) { commandSender.sendMessage(ChatColor.RED+"Could not find a player by that name!"); return false; }
-        if (cmd.contains("time")) {
-            String message = playerName+" now has "+pd.getMinutesRemaining()+" minutes of play time.";
-            pd.addTime(amount);
-            commandSender.sendMessage(message);
-            System.out.println(message);
-            if (amount > 0) {
-                pd.sendMessage(ChatColor.GREEN+"You have received "+(amount/60)+" hours of play time.");
-            } else if (amount < 0) {
-                pd.sendMessage(ChatColor.RED+"You have lost "+(-amount/60)+" hours of play time.");
-            }
+        if (cmd.contains("plot")) {
+            pd.addMaxPlot(amount);
+            pd.sendMessage(ChatColor.YELLOW+"You now have "+pd.getMaxPlots()+" available plots.");
         }
         return true;
     }

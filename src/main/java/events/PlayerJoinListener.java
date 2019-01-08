@@ -27,16 +27,10 @@ public class PlayerJoinListener implements Listener {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "buycraft forcecheck");
         Player p = event.getPlayer();
         PlayerData pd = DataStore.getPlayerData(p.getUniqueId());
-        if (pd.getMinutesRemaining() < 1) {
-            p.kickPlayer("You do not have any play time remaining!\n"
-                    +ChatColor.YELLOW+"Go to "+ChatColor.AQUA+OpenMC.WEBSITE_URL+"/play"+ChatColor.YELLOW+" to get more!");
-            return;
-        }
 
-        if (pd.getHoursRemaining() <= 10) {
-            ChatColor color = pd.getMinutesRemaining() < 120 ? ChatColor.RED : ChatColor.WHITE;
-            p.sendMessage(color+"You have "+MiscMath.timeLeftAsString(pd.getTimeRemaining())
-                    +" of play time left!"+(pd.getMinutesRemaining() < 120 ? " Go to "+ChatColor.BOLD+ChatColor.AQUA+OpenMC.WEBSITE_URL+"/play"+ ChatColor.RED+" to get more." : ""));
+        if (pd.trialDaysLeft() <= 0 && !pd.isMember()) {
+            event.setJoinMessage("");
+            event.getPlayer().kickPlayer(ChatColor.YELLOW+"Your trial period has expired! Go to openmc.net to become a member.");
         }
 
         pd.updateLastLogin();
@@ -55,7 +49,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
-        DataStore.getPlayerData(event.getPlayer().getUniqueId()).adjustTimeRemaining();
         DataStore.save();
     }
 

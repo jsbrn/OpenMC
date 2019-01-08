@@ -13,6 +13,7 @@ import misc.MiscMath;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,7 @@ public class OpenMC extends JavaPlugin {
     public static Location CAPITAL;
     public static int SPAWN_VILLAGE_RADIUS = 64;
     public static String WEBSITE_URL = "https://openmc.net";
+    public static Configuration CONFIG;
 
     @Override
     public void onEnable() {
@@ -37,6 +39,7 @@ public class OpenMC extends JavaPlugin {
         CAPITAL = new Location(OVERWORLD, -629, 64, 288);
         SERVER = getServer();
         OVERWORLD.setSpawnLocation(CAPITAL);
+        CONFIG = this.getConfig();
 
         pluginManager.registerEvents(new CapitalProtector(), this);
         pluginManager.registerEvents(new PlotProtector(), this);
@@ -57,7 +60,6 @@ public class OpenMC extends JavaPlugin {
         DataStore.load();
         DataStore.save();
         startRecurringEvents();
-        HTTPController.keepAlive();
     }
 
     @Override
@@ -66,13 +68,6 @@ public class OpenMC extends JavaPlugin {
     }
 
     private void startRecurringEvents() {
-
-        TimerTask keepWebServerAlive = new TimerTask() {
-            @Override
-            public void run() {
-                HTTPController.keepAlive();
-            }
-        };
 
         TimerTask reputationFromPlaying = new TimerTask() {
             @Override
@@ -84,7 +79,6 @@ public class OpenMC extends JavaPlugin {
             }
         };
         SERVER.getScheduler().runTaskTimer(this, reputationFromPlaying, 0, MiscMath.secondsToTicks(60*20)); //20 minutes
-        //SERVER.getScheduler().runTaskTimer(this, keepWebServerAlive, 0, MiscMath.secondsToTicks(60*5)); //5 minutes
     }
 
 }
