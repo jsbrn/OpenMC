@@ -1,5 +1,6 @@
 package io;
 
+import controllers.DynmapController;
 import main.OpenMC;
 import org.bukkit.Location;
 import org.bukkit.Material;

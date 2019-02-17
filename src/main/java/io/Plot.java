@@ -4,10 +4,7 @@ import main.OpenMC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
-import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.UUID;
 
@@ -15,12 +12,12 @@ public class Plot {
 
     private Location center, origin, origin2;
     private UUID owner;
-    private int radius = 25;
+    public static int RADIUS = 25;
     private Material banner_type;
 
     public Plot(UUID owner, Location loc) {
-        this.origin = new Location(OpenMC.OVERWORLD, loc.getBlockX() - radius, loc.getBlockY() + radius, loc.getBlockZ() - radius);
-        this.origin2 = new Location(OpenMC.OVERWORLD, loc.getBlockX() + radius, loc.getBlockY() - radius, loc.getBlockZ() + radius);
+        this.origin = new Location(OpenMC.OVERWORLD, loc.getBlockX() - RADIUS, loc.getBlockY() + RADIUS, loc.getBlockZ() - RADIUS);
+        this.origin2 = new Location(OpenMC.OVERWORLD, loc.getBlockX() + RADIUS, loc.getBlockY() - RADIUS, loc.getBlockZ() + RADIUS);
         this.center = loc;
         this.banner_type = center.getBlock().getBlockData().getAsString().contains("banner")
                 ? center.getBlock().getType() : Material.WHITE_BANNER;
@@ -43,7 +40,7 @@ public class Plot {
     public boolean ownedBy(UUID playerID) { return playerID.compareTo(owner) == 0; }
 
     public int distanceTo(Location loc) { return (int)loc.distance(center); }
-    public boolean isTooClose(Location loc) { return distanceTo(loc) <= radius * 2; }
+    public boolean isTooClose(Location loc) { return distanceTo(loc) <= RADIUS * 2; }
     public boolean isForeignTo(UUID playerID) { return !ownedBy(playerID) && !DataStore.getPlayerData(owner).isFriendsWith(playerID); }
 
     public boolean isBannerBroken() {

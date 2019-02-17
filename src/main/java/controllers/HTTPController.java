@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class HTTPController {
 
-    public static void post(String url, JSONObject json) {
+    public static int post(String url, JSONObject json) {
         try {
             URL urlObject = new URL(url);
             HttpURLConnection con = (HttpURLConnection) urlObject.openConnection();
@@ -25,8 +25,8 @@ public class HTTPController {
 
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
             wr.write(json.toString());
-
             wr.flush();
+            return con.getResponseCode();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -34,9 +34,10 @@ public class HTTPController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return -1;
     }
 
-    public static void postPlayerUpdate(PlayerData pd) {
+    public static int postPlayerUpdate(PlayerData pd) {
         JSONObject json = new JSONObject();
         json.put("api_key", OpenMC.CONFIG.getString("api_key"));
     }

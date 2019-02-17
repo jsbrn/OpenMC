@@ -28,11 +28,6 @@ public class PlayerJoinListener implements Listener {
         Player p = event.getPlayer();
         PlayerData pd = DataStore.getPlayerData(p.getUniqueId());
 
-        if (pd.trialDaysLeft() <= 0 && !pd.isMember()) {
-            event.setJoinMessage("");
-            event.getPlayer().kickPlayer(ChatColor.YELLOW+"Your trial period has expired! Go to openmc.net to become a member.");
-        }
-
         pd.updateLastLogin();
         pd.updateLastActivity();
 
