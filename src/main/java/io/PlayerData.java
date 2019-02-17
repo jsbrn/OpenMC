@@ -7,20 +7,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 public class PlayerData {
 
     private UUID playerID;
     private Location spawn;
-    private boolean isMember;
     private int reputation, banCount, maxPlots;
     private long lastWarning, lastActivity, firstJoin, lastJoin;
+    private String addons;
 
     private ArrayList<UUID> friends;
 
@@ -28,12 +28,18 @@ public class PlayerData {
         this.playerID = playerID;
         this.reputation = 0;
         this.lastWarning = 0;
-        this.maxPlots = 2;
-        this.isMember = false;
+        this.maxPlots = 1;
         this.firstJoin = System.currentTimeMillis();
         this.lastActivity = System.currentTimeMillis();
         this.lastJoin = System.currentTimeMillis();
         this.friends = new ArrayList<UUID>();
+        this.addons = "";
+    }
+
+    public String getColor() {
+        int random = new Random(playerID.toString().hashCode()).nextInt();
+        String hexColor = String.format("#%06X", (0xFFFFFF & random));
+        return hexColor.replace("#", "");
     }
 
     public OfflinePlayer getOfflinePlayer() {
@@ -55,15 +61,12 @@ public class PlayerData {
         int owned = DataStore.getPlots(playerID).size();
         return owned < maxPlots;
     }
+
     public void addMaxPlot(int amount) { maxPlots += amount; }
     public int getMaxPlots() { return maxPlots; }
 
-    public void setMembership(boolean m) { isMember = m; }
-    public boolean isMember() { return isMember; }
-    public int trialDaysLeft() {
-        long daysSince = (System.currentTimeMillis() - firstJoin) / 1000 / 60 / 60 / 24;
-        return (int)Math.max(7 - daysSince, 0);
-    }
+    public void addAddon(String addonCode) { addons = addons + addonCode; }
+    public boolean hasAddon(String addonCode) { return addons.contains(addonCode); }
 
     public boolean isFriendsWith(UUID id) { return friends.contains(id); }
     public boolean addFriend(UUID id) { if (friends.contains(id)) return false; else { friends.add(id); return true; } }
@@ -113,9 +116,7 @@ public class PlayerData {
                 "title " + getOfflinePlayer().getName() + " actionbar {\"text\":\"" + message + "\",\"color\":\"" + color.name().toLowerCase() + "\"}");
     }
 
-    public int getBanCount() {
-        return banCount;
-    }
+    public int getBanCount() { return banCount; }
     public void ban() {
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
                 "ban " + getOfflinePlayer().getName() + " §cYour reputation is " + reputation + "!");
@@ -123,19 +124,11 @@ public class PlayerData {
         banCount++;
     }
 
-    public boolean warnedRecently(int seconds) {
-        return System.currentTimeMillis() - lastWarning < (seconds * 1000);
-    }
-    public void setWarned() {
-        lastWarning = System.currentTimeMillis();
-    }
+    public boolean warnedRecently(int seconds) { return System.currentTimeMillis() - lastWarning < (seconds * 1000); }
+    public void setWarned() { lastWarning = System.currentTimeMillis(); }
 
-    public void updateLastActivity() {
-        lastActivity = System.currentTimeMillis();
-    }
-    public int awayTime() {
-        return (int) ((System.currentTimeMillis() - lastActivity) / 1000 / 60);
-    }
+    public void updateLastActivity() { lastActivity = System.currentTimeMillis(); }
+    public int awayTime() { return (int) ((System.currentTimeMillis() - lastActivity) / 1000 / 60); }
 
     public boolean isOnline() { return getPlayer() != null ? getPlayer().isOnline() : false; }
     public void updateLastLogin() { lastJoin = System.currentTimeMillis(); }
@@ -147,7 +140,7 @@ public class PlayerData {
 
     public boolean load(HashMap<String, String> data) {
         if (data == null) return false;
-        firstJoin = Integer.parseInt(data.getOrDefault("first_join", System.currentTimeMillis()+""));
+        firstJoin = Long.parseLong(data.getOrDefault("first_join", System.currentTimeMillis()+""));
         lastJoin = Long.parseLong(data.getOrDefault("last_join", System.currentTimeMillis()+""));
         reputation = Integer.parseInt(data.getOrDefault("rep", "0"));
         banCount = Integer.parseInt(data.getOrDefault("bans", "0"));
@@ -155,11 +148,14 @@ public class PlayerData {
                         Integer.parseInt(data.getOrDefault("spawn_x", OpenMC.CAPITAL.getBlockX()+"")),
                         Integer.parseInt(data.getOrDefault("spawn_y", OpenMC.CAPITAL.getBlockY()+"")),
                         Integer.parseInt(data.getOrDefault("spawn_z", OpenMC.CAPITAL.getBlockZ()+"")));
+        addons = data.getOrDefault("addons", "");
+        maxPlots = Integer.parseInt(data.getOrDefault("max_plots", "1"));
         return true;
     }
+
     public String asString() {
         String saveString = "type = player, uuid = "+playerID+", rep = "+reputation+", bans = "+banCount
-                +", last_join = "+lastJoin+", first_join = "+firstJoin;
+                +", last_join = "+lastJoin+", first_join = "+firstJoin+", addons = "+ addons+", max_plots = "+maxPlots;
         if (getSpawn() != null) saveString += ", spawn_x = "+getSpawn().getBlockX()
                 +", spawn_y = "+getSpawn().getBlockY()
                 +", spawn_z = "+getSpawn().getBlockZ();

@@ -1,5 +1,6 @@
 package events.protection;
 
+import controllers.DynmapController;
 import io.DataStore;
 import io.PlayerData;
 import io.Plot;
@@ -164,6 +165,28 @@ public class PlotProtector implements Listener {
         }
     }
 
+    @EventHandler
+    public void onCropTrample(PlayerInteractEvent event) {
+        if (event.isCancelled()) return;
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+        if (event.getAction() != Action.PHYSICAL || block.getType() != Material.FARMLAND) return;
+        if (event.getClickedBlock().getLocation().getWorld() != OpenMC.OVERWORLD) return;
+        Plot here = DataStore.getPlot(block.getLocation());
+        if (here == null) return;
+        if (here.isForeignTo(event.getPlayer().getUniqueId())) {
+            PlayerData pd = DataStore.getPlayerData(event.getPlayer().getUniqueId());
+            if (!pd.warnedRecently(5)) {
+                event.getPlayer().sendMessage(ChatColor.RED+"These crops are not yours!");
+                event.setCancelled(true);
+                pd.setWarned();
+            } else {
+                pd.addReputation(-5, "trampling "+here.owner().getName()+"'s crops");
+            }
+
+        }
+    }
+
     private static void claimPlot(BlockPlaceEvent event) {
         PlayerData pd = DataStore.getPlayerData(event.getPlayer().getUniqueId());
         if (!pd.canClaimLand()) {
@@ -176,8 +199,8 @@ public class PlotProtector implements Listener {
         if (here == null) {
             ArrayList<Plot> tooClose = DataStore.getPlotsTooClose(placement);
             if (tooClose.isEmpty()) {
-                DataStore.addPlot(event.getPlayer().getUniqueId(), placement);
-                event.getPlayer().sendMessage("You claimed this plot (25 block radius)!");
+                DynmapController.markPlot(DataStore.addPlot(event.getPlayer().getUniqueId(), placement));
+                event.getPlayer().sendMessage("You claimed this plot (25 block RADIUS)!");
             } else {
                 event.getPlayer().sendMessage("This area is too close to "+tooClose.size()
                         +" other plot"+(tooClose.size() > 1 ? "s" : "")+"!");
@@ -198,7 +221,8 @@ public class PlotProtector implements Listener {
             boolean owned = !here.ownedBy(event.getPlayer().getUniqueId());
             if (!owned) {
                 if (DataStore.removePlot(here))
-                    event.getPlayer().sendMessage("You no longer own this plot (25 block radius)!");
+                    event.getPlayer().sendMessage("You no longer own this plot (25 block RADIUS)!");
+                DynmapController.removePlot(here);
             } else {
                 event.getPlayer().sendMessage("This banner is owned by " + here.owner().getName() + ".");
                 event.setCancelled(true);

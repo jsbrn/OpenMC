@@ -1,9 +1,7 @@
 package main;
 
 import commands.*;
-import controllers.HTTPController;
 import events.*;
-import events.protection.ReputationListener;
 import events.protection.CapitalProtector;
 import events.protection.PlotProtector;
 import io.DataConverter;
@@ -41,9 +39,10 @@ public class OpenMC extends JavaPlugin {
         OVERWORLD.setSpawnLocation(CAPITAL);
         CONFIG = this.getConfig();
 
+        CONFIG.addDefault("api_key", "");
+
         pluginManager.registerEvents(new CapitalProtector(), this);
         pluginManager.registerEvents(new PlotProtector(), this);
-        pluginManager.registerEvents(new ReputationListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerRespawnListener(), this);
         pluginManager.registerEvents(new SignInteractListener(), this);
