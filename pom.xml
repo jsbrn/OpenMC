@@ -63,7 +63,11 @@
         </dependency-->
     </dependencies>
 
+
     <build>
+        <finalName>OpenMC</finalName> <!--build without dependencies :)-->
+    </build>
+    <!--build>
         <finalName>OpenMC</finalName>
         <plugins>
             <plugin>
@@ -91,6 +95,6 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build-->
     
 </project>
