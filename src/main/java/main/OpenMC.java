@@ -1,22 +1,18 @@
 package main;
 
 import commands.*;
+import commands.admin.AddCommand;
+import commands.admin.SetCommand;
 import events.*;
-import events.protection.CapitalProtector;
 import events.protection.PlotProtector;
 import io.DataConverter;
 import io.DataStore;
-import io.PlayerData;
-import misc.MiscMath;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.Configuration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.TimerTask;
 
 public class OpenMC extends JavaPlugin {
 
@@ -41,18 +37,18 @@ public class OpenMC extends JavaPlugin {
 
         CONFIG.addDefault("api_key", "");
 
-        pluginManager.registerEvents(new CapitalProtector(), this);
         pluginManager.registerEvents(new PlotProtector(), this);
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerRespawnListener(), this);
-        pluginManager.registerEvents(new SignInteractListener(), this);
         pluginManager.registerEvents(new ChatListener(), this);
-        pluginManager.registerEvents(new PlayerSleepListener(), this);
         pluginManager.registerEvents(new CommandOverrider(), this);
         this.getCommand("guide").setExecutor(new GuideCommand());
         this.getCommand("set").setExecutor(new SetCommand());
         this.getCommand("add").setExecutor(new AddCommand());
         this.getCommand("plots").setExecutor(new PlotsCommand());
+        this.getCommand("deposit").setExecutor(new DepositCommand());
+        this.getCommand("withdraw").setExecutor(new WithdrawCommand());
+        this.getCommand("stats").setExecutor(new ToggleLeaderboardCommand());
 
         DataConverter.register();
         DataStore.backup();
@@ -68,7 +64,7 @@ public class OpenMC extends JavaPlugin {
 
     private void startRecurringEvents() {
 
-        TimerTask reputationFromPlaying = new TimerTask() {
+        /*TimerTask reputationFromPlaying = new TimerTask() {
             @Override
             public void run() {
                 for (Player p: SERVER.getOnlinePlayers().toArray(new Player[]{})) {
@@ -77,7 +73,7 @@ public class OpenMC extends JavaPlugin {
                 }
             }
         };
-        SERVER.getScheduler().runTaskTimer(this, reputationFromPlaying, 0, MiscMath.secondsToTicks(60*20)); //20 minutes
+        SERVER.getScheduler().runTaskTimer(this, reputationFromPlaying, 0, MiscMath.secondsToTicks(60*20)); //20 minutes*/
     }
 
 }

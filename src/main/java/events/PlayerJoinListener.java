@@ -24,16 +24,16 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "buycraft forcecheck");
         Player p = event.getPlayer();
         PlayerData pd = DataStore.getPlayerData(p.getUniqueId());
 
         pd.updateLastLogin();
         pd.updateLastActivity();
+        pd.createScoreboard();
 
         if (!p.hasPlayedBefore()) {
             MiscCommands.giveSpawnItems(p);
-            pd.setSpawn(MiscCommands.randomSpawn(200, 3000));
+            pd.setSpawn(MiscCommands.randomSpawn(100, 3000));
             p.teleport(pd.getSpawn());
             p.sendTitle("Welcome to OpenMC!", "Please read the server guide.",
                     MiscMath.secondsToTicks(2), MiscMath.secondsToTicks(5), MiscMath.secondsToTicks(2));

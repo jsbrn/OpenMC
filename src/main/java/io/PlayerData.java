@@ -7,6 +7,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -18,44 +22,68 @@ public class PlayerData {
 
     private UUID playerID;
     private Location spawn;
-    private int reputation, banCount, maxPlots;
-    private long lastWarning, lastActivity, firstJoin, lastJoin;
+    private int maxPlots, emeralds;
+    private long lastActivity, firstJoin, lastJoin;
     private String addons;
 
-    private ArrayList<UUID> friends;
+    private Scoreboard scoreboard;
+    private boolean showScoreboard;
 
     public PlayerData(UUID playerID) {
         this.playerID = playerID;
-        this.reputation = 0;
-        this.lastWarning = 0;
         this.maxPlots = 1;
         this.firstJoin = System.currentTimeMillis();
         this.lastActivity = System.currentTimeMillis();
         this.lastJoin = System.currentTimeMillis();
-        this.friends = new ArrayList<UUID>();
         this.addons = "";
+        this.showScoreboard = true;
     }
 
-    public String getColor() {
+    public void createScoreboard() {
+        scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("Player Stats", "Criteria",
+                ChatColor.YELLOW + getPlayer().getDisplayName());
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.getScore(ChatColor.GREEN + "Emeralds:").setScore(emeralds);
+        objective.getScore("Plots:").setScore(plotCount());
+        refreshScoreboard();
+    }
+
+    public void refreshScoreboard() {
+        if (showScoreboard) {
+            scoreboard.getObjective("Player Stats").getScore(ChatColor.GREEN + "Emeralds:").setScore(emeralds);
+            scoreboard.getObjective("Player Stats").getScore("Plots:").setScore(plotCount());
+            getPlayer().setScoreboard(scoreboard);
+        } else {
+            getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        }
+    }
+
+    public void toggleScoreboard() {
+        showScoreboard = !showScoreboard;
+        refreshScoreboard();
+    }
+
+    public void addEmeralds(int amount) { setEmeralds(emeralds + amount); }
+    public void setEmeralds(int amount) { emeralds = (int)MiscMath.clamp(amount, 0, Integer.MAX_VALUE); }
+    public int getEmeralds() { return emeralds; }
+
+    public String getHexCode() {
         int random = new Random(playerID.toString().hashCode()).nextInt();
         String hexColor = String.format("#%06X", (0xFFFFFF & random));
         return hexColor.replace("#", "");
     }
 
-    public OfflinePlayer getOfflinePlayer() {
-        return OpenMC.SERVER.getOfflinePlayer(playerID);
-    }
-    public Player getPlayer() {
-        return getOfflinePlayer().getPlayer();
-    }
+    public OfflinePlayer getOfflinePlayer() { return OpenMC.SERVER.getOfflinePlayer(playerID); }
+    public Player getPlayer() { return getOfflinePlayer().getPlayer(); }
+    public Location getSpawn() { return spawn; }
+    public void setSpawn(Location loc) { spawn = loc; }
     public Location getRespawnLocation() {
         //first bed then spawn then capital
         if (getOfflinePlayer().getBedSpawnLocation() != null) return getOfflinePlayer().getBedSpawnLocation();
         if (getSpawn() != null) return getSpawn();
         return OpenMC.CAPITAL;
     }
-    public Location getSpawn() { return spawn; }
-    public void setSpawn(Location loc) { spawn = loc; }
 
     public boolean canClaimLand() {
         int owned = DataStore.getPlots(playerID).size();
@@ -64,41 +92,10 @@ public class PlayerData {
 
     public void addMaxPlot(int amount) { maxPlots += amount; }
     public int getMaxPlots() { return maxPlots; }
+    public int plotCount() { return DataStore.getPlots(playerID).size(); }
 
     public void addAddon(String addonCode) { addons = addons + addonCode; }
     public boolean hasAddon(String addonCode) { return addons.contains(addonCode); }
-
-    public boolean isFriendsWith(UUID id) { return friends.contains(id); }
-    public boolean addFriend(UUID id) { if (friends.contains(id)) return false; else { friends.add(id); return true; } }
-    public boolean removeFriend(UUID id) {
-        if (friends.contains(id)) {
-            friends.remove(id);
-            return true;
-        }
-        return false;
-    }
-
-    public int getReputation() {
-        return reputation;
-    }
-    public void addReputation(int amount, String reason) {
-        if (amount < 0 && reputation > 0) reputation = 0;
-        if (reputation <= -100 && amount < 0) {
-            ban();
-            return;
-        }
-        sendMessage((amount < 0 ? ChatColor.RED : ChatColor.GREEN) + (amount > 0 ? "+" : "") + amount + " reputation "
-                + (reason != null ? "(" + reason + ")" : ""));
-        setReputation(reputation + amount, amount < 0 && reputation + amount < 0);
-        if (reputation <= -100 && amount < 0)
-            sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "You will be banned on the next offense.");
-    }
-
-    public void setReputation(int amount, boolean showReputation) {
-        reputation = (int) MiscMath.clamp(amount, -100, 100);
-        if (showReputation) sendTitle("", ChatColor.RED + "Reputation: " + reputation, 3);
-        if (amount < 0) setWarned(); //if the rep is going down, you were probably warned
-    }
 
     public void sendMessage(String message) {
         if (getPlayer() != null && message != null)
@@ -116,17 +113,6 @@ public class PlayerData {
                 "title " + getOfflinePlayer().getName() + " actionbar {\"text\":\"" + message + "\",\"color\":\"" + color.name().toLowerCase() + "\"}");
     }
 
-    public int getBanCount() { return banCount; }
-    public void ban() {
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                "ban " + getOfflinePlayer().getName() + " §cYour reputation is " + reputation + "!");
-        reputation = 0;
-        banCount++;
-    }
-
-    public boolean warnedRecently(int seconds) { return System.currentTimeMillis() - lastWarning < (seconds * 1000); }
-    public void setWarned() { lastWarning = System.currentTimeMillis(); }
-
     public void updateLastActivity() { lastActivity = System.currentTimeMillis(); }
     public int awayTime() { return (int) ((System.currentTimeMillis() - lastActivity) / 1000 / 60); }
 
@@ -142,20 +128,20 @@ public class PlayerData {
         if (data == null) return false;
         firstJoin = Long.parseLong(data.getOrDefault("first_join", System.currentTimeMillis()+""));
         lastJoin = Long.parseLong(data.getOrDefault("last_join", System.currentTimeMillis()+""));
-        reputation = Integer.parseInt(data.getOrDefault("rep", "0"));
-        banCount = Integer.parseInt(data.getOrDefault("bans", "0"));
         spawn = new Location(OpenMC.OVERWORLD,
                         Integer.parseInt(data.getOrDefault("spawn_x", OpenMC.CAPITAL.getBlockX()+"")),
                         Integer.parseInt(data.getOrDefault("spawn_y", OpenMC.CAPITAL.getBlockY()+"")),
                         Integer.parseInt(data.getOrDefault("spawn_z", OpenMC.CAPITAL.getBlockZ()+"")));
         addons = data.getOrDefault("addons", "");
         maxPlots = Integer.parseInt(data.getOrDefault("max_plots", "1"));
+        emeralds = Integer.parseInt(data.getOrDefault("emeralds", "0"));
+        showScoreboard = Boolean.parseBoolean(data.getOrDefault("show_scoreboard", "true"));
         return true;
     }
 
     public String asString() {
-        String saveString = "type = player, uuid = "+playerID+", rep = "+reputation+", bans = "+banCount
-                +", last_join = "+lastJoin+", first_join = "+firstJoin+", addons = "+ addons+", max_plots = "+maxPlots;
+        String saveString = "type = player, uuid = "+playerID+", last_join = "+lastJoin+", first_join = "+firstJoin+", addons = "+ addons
+                +", max_plots = "+maxPlots+", emeralds = "+emeralds+", show_scoreboard = "+showScoreboard;
         if (getSpawn() != null) saveString += ", spawn_x = "+getSpawn().getBlockX()
                 +", spawn_y = "+getSpawn().getBlockY()
                 +", spawn_z = "+getSpawn().getBlockZ();

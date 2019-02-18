@@ -176,14 +176,7 @@ public class PlotProtector implements Listener {
         if (here == null) return;
         if (here.isForeignTo(event.getPlayer().getUniqueId())) {
             PlayerData pd = DataStore.getPlayerData(event.getPlayer().getUniqueId());
-            if (!pd.warnedRecently(5)) {
-                event.getPlayer().sendMessage(ChatColor.RED+"These crops are not yours!");
-                event.setCancelled(true);
-                pd.setWarned();
-            } else {
-                pd.addReputation(-5, "trampling "+here.owner().getName()+"'s crops");
-            }
-
+            event.setCancelled(true);
         }
     }
 

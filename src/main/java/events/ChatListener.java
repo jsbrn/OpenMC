@@ -15,7 +15,7 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Player p = event.getPlayer();
+        /*Player p = event.getPlayer();
         DataStore.getPlayerData(p.getUniqueId()).updateLastActivity();
         Set<Player> recipients = event.getRecipients();
         boolean globalMessage = event.getMessage().startsWith("!");
@@ -39,7 +39,7 @@ public class ChatListener implements Listener {
             }
 
         }
-        event.setCancelled(true); //override the chat
+        event.setCancelled(true); //override the chat*/
     }
 
 }

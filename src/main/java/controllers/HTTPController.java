@@ -40,5 +40,6 @@ public class HTTPController {
     public static int postPlayerUpdate(PlayerData pd) {
         JSONObject json = new JSONObject();
         json.put("api_key", OpenMC.CONFIG.getString("api_key"));
+        return -1;
     }
 }

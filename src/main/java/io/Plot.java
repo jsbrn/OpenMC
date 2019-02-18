@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class Plot {
@@ -41,7 +42,7 @@ public class Plot {
 
     public int distanceTo(Location loc) { return (int)loc.distance(center); }
     public boolean isTooClose(Location loc) { return distanceTo(loc) <= RADIUS * 2; }
-    public boolean isForeignTo(UUID playerID) { return !ownedBy(playerID) && !DataStore.getPlayerData(owner).isFriendsWith(playerID); }
+    public boolean isForeignTo(UUID playerID) { return !ownedBy(playerID); }
 
     public boolean isBannerBroken() {
         return !center().getBlock().getBlockData().getAsString().contains("banner");

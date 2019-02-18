@@ -16,15 +16,11 @@ public class CommandOverrider implements Listener {
     private static String[] whitelisted = new String[]{
         "plots",
         "guide",
-        "rep",
-        "friend",
-        "unfriend",
-        "global",
-        "g",
         "website",
         "discord",
-        "reset",
-        "help"
+        "help",
+        "withdraw",
+        "deposit"
     };
 
     @EventHandler

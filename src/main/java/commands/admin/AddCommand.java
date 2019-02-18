@@ -1,4 +1,4 @@
-package commands;
+package commands.admin;
 
 import io.DataStore;
 import io.PlayerData;
