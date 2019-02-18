@@ -22,6 +22,7 @@ public class DataStore {
 
     private static ArrayList<Plot> PLOTS = new ArrayList<Plot>();
     private static ArrayList<PlayerData> PLAYER_DATA = new ArrayList<PlayerData>();
+    private static ArrayList<PlayerData> ACTIVE_TRADES
 
     private static boolean safeToSave = false;
 
