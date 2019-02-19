@@ -7,14 +7,12 @@ import java.util.UUID;
 public class Trade {
 
     private int price, amount;
-    private boolean buy;
     private Material item;
 
-    private UUID poster, buyer;
-    private boolean paid, transferCompleted;
+    private UUID buyer, seller;
+    private boolean buyerReceived, sellerReceived;
 
-    protected Trade(boolean buy, int amount, Material item, int price, UUID playerUUID) {
-        this.buy = buy;
+    protected Trade(int amount, Material item, int price) {
         this.amount = amount;
         this.item = item;
         this.price = price;
@@ -23,10 +21,18 @@ public class Trade {
     public int getAmount() { return amount; }
     public int getPrice() { return price; }
     public Material getItem() { return item; }
-    public boolean isBuyOffer() { return buy; }
 
-    public void accept(PlayerData acceptor) {
+    public void assignBuyer(UUID playerUUID) { buyer = playerUUID; }
+    public void assignSeller(UUID playerUUID) { seller = playerUUID; }
 
+    public void accept(UUID playerID) {
+        if (buyer == null && seller != null) buyer = playerID;
+        if (seller == null && buyer != null) seller = playerID;
     }
+
+    public void markBuyerReceived() { buyerReceived = true; }
+    public void markSellerReceived() { sellerReceived = true; }
+    public boolean buyerReceived() { return buyerReceived; }
+    public boolean sellerReceived() { return sellerReceived; }
 
 }

@@ -22,7 +22,8 @@ public class DataStore {
 
     private static ArrayList<Plot> PLOTS = new ArrayList<Plot>();
     private static ArrayList<PlayerData> PLAYER_DATA = new ArrayList<PlayerData>();
-    private static ArrayList<PlayerData> ACTIVE_TRADES
+    private static ArrayList<Trade> ACTIVE_TRADES = new ArrayList<Trade>();
+    private static ArrayList<Trade> COMPLETED_TRADES = new ArrayList<Trade>();
 
     private static boolean safeToSave = false;
 
@@ -47,6 +48,10 @@ public class DataStore {
         for (PlayerData pd: PLAYER_DATA)
             if (pd.getOfflinePlayer().getName().equalsIgnoreCase(playerName)) return pd;
         return null;
+    }
+
+    public static void postTrade(Trade trade) {
+        ACTIVE_TRADES.add(trade);
     }
 
     public static Plot addPlot(UUID playerID, Location loc) {
