@@ -1,15 +1,10 @@
 package controllers;
 
-import com.google.gson.JsonObject;
-import io.PlayerData;
-import main.OpenMC;
+import main.JServer;
 import org.json.simple.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class HTTPController {
 
@@ -37,9 +32,4 @@ public class HTTPController {
         return -1;
     }
 
-    public static int postPlayerUpdate(PlayerData pd) {
-        JSONObject json = new JSONObject();
-        json.put("api_key", OpenMC.CONFIG.getString("api_key"));
-        return -1;
-    }
 }

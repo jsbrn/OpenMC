@@ -21,7 +21,7 @@
               <transformers>
                 <transformer>
                   <manifestEntries>
-                    <Main-Class>main.OpenMC</Main-Class>
+                    <Main-Class>main.JServer</Main-Class>
                     <Build-Number>1.0</Build-Number>
                   </manifestEntries>
                 </transformer>

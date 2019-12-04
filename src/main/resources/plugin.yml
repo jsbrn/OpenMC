@@ -1,27 +1,12 @@
-name: OpenMC
-version: 0.0.1
+name: JServer
+version: 1.0.0
 author: jsbrn
-main: main.OpenMC
+main: main.JServer
 api-version: 1.13
 commands:
-  guide:
-    description: Lost the guide? Get a new one!
-    usage: /guide
-  plots:
-    description: List all your plots.
-    usage: /plots
-  deposit:
-    description: Deposit emeralds from your inventory into account.
-    usage: /deposit <amount>
-  withdraw:
-    description: Withdraw emeralds from your account.
-    usage: /withdraw <amount>
-  stats:
-    description: Toggle the stats display (sidebar).
-    usage: /stats
-  set:
-    description: Admin command. Sets a value for the specified player.
-    usage: /set (time|rep) <player> <amount>
-  add:
-    description: Admin command. Adds a value to the specified player.
-    usage: /add time <player> <amount>
+  mark:
+    description: Add a marker to the map.
+    usage: /mark <name> <icon>
+  unmark:
+    description: Remove a marker from the map.
+    usage: /unmark <name>
